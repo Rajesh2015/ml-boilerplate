@@ -1,4 +1,4 @@
-# React + Flask Development Boilerplate
+# React + Flask + MLFlow Development Boilerplate
 
 ## Overview
 Extremely lightweight development environment for a web application
@@ -27,6 +27,28 @@ out [this blog post](https://medium.com/superhighfives/a-top-shelf-web-stack-rai
 which can make collaborating and deploying simpler. [Docker Compose](https://docs.docker.com/compose/)
 is a tool for easily managing applications running multiple Docker containers. 
 
+### MLFlow Serving
+Basic process is to manage models in Databricks and copy models to a container as described in https://dev.to/itachiredhair/downloading-mlflow-model-from-databricks-and-serving-with-docker-38ip
+
+To downlaod a model in Databricks:
+
+    import mlflow
+    from mlflow.store.artifact.models_artifact_repo import ModelsArtifactRepository
+
+    def getModel(model_name, model_stage = "Staging", dest_path = "models"):
+    local_path = f'file:/databricks/driver/{dest_path}'
+    mlflow.set_tracking_uri("databricks")
+    
+    dbutils.fs.mkdirs(local_path)
+    ModelsArtifactRepository(
+        f'models:/{model_name}/{model_stage}').download_artifacts("", dst_path = dest_path)
+
+    dbutils.fs.cp("file:/databricks/driver/models/", "/FileStore/{local_path}/", True)
+    print(f'{model_stage} Model {model_name} can be downloaded like this:')
+    print(f'databricks fs cp dbfs:/FileStore/{dest_path}/ . --recursive --overwrite')
+    l = dbutils.fs.ls(f'/FileStore/{dest_path}/')
+    return l
+
 ## How to Use
 Firstly, download [Docker desktop](https://www.docker.com/products/docker-desktop) and follow its
  instructions to install it. This allows us to start using Docker containers.
@@ -53,7 +75,7 @@ respective prices.
 Though the apparent result is underwhelming, this data was retrieved through an API call
  to our Flask server, which can be accessed at
 
-    http://localhost:5000/api/v1.0/test
+    http://localhost:4000/api/v1.0/test
     
 The trailing '*/api/v1.0/test*' is simply for looks, and can be tweaked easily
 in [api/app.py](api/app.py). The front-end logic for consuming our API is
