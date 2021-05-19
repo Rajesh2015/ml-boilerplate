@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css'
 
+const API_URL = process.env.REACT_APP_API_URL
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +15,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:5000/api/v1.0/test")
+    fetch(API_URL)
       .then(res => res.json())
       .then(
         (result) => {

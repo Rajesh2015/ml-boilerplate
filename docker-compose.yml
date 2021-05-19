@@ -1,32 +1,39 @@
-version: '3'
+version: '3.7'
 
 services:
   models:
     build: models
+    env_file:
+      - .env
     ports:
-      - "5000:5000"
+      - "${MLFLOW_PORT}:${MLFLOW_PORT}"
 
   api:
     build: api
-    command: ["flask", "run", "--host=0.0.0.0"]
+    command: ["flask", "run", "--host=0.0.0.0", "--port=${API_PORT}"]
     volumes:
       - ./api:/backend
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
+    env_file:
+      - .env
     ports:
-      - "4000:4000"
+      - "${API_PORT}:${API_PORT}"
 
   client:
     build: client
-    command: ["npm", "start"]
+    command: ["npm", "start", "--port ${UI_PORT}"]
     volumes:
       - ./client:/frontend
       - node-modules:/frontend/node_modules
     environment:
       - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:${API_PORT}/api/v1.0/test
+    env_file:
+      - .env
     ports:
-      - '3000:3000'
+      - '${UI_PORT}:${UI_PORT}'
     depends_on:
       - api
 
