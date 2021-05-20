@@ -1,23 +1,58 @@
-# Warning: This Compose file is incomplete. This file does NOT prepare the project for deployment.
-
-version: '3'
+version: '3.7'
 
 services:
+  models:
+    build: models
+    image: ml-boilerplate/models
+    env_file:
+      - .env
+    ports:
+      - "${MLFLOW_PORT}:${MLFLOW_PORT}"
+
+  postgres:
+    restart: always
+    image: ml-boilerplate/postgres
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    command: -p ${POSTGRES_PORT}
+
   api:
     build: api
-    command: "flask run --host=0.0.0.0"
+    image: ml-boilerplate/api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./api:/backend
     environment:
-    - FLASK_ENV=production
-    - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+    env_file:
+      - .env
     ports:
-    - "9405:9405"
+      - "${API_PORT}:5000"
 
   client:
     build: client
-    command: "npm run build &&"
+    image: ml-boilerplate/client
+    command: ["npm", "start", "--port ${UI_PORT}"]
+    volumes:
+      - ./client:/frontend
+      - node-modules:/frontend/node_modules
     environment:
-    - NODE_ENV=production
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:${API_PORT}/api/v1.0/test
+    env_file:
+      - .env
     ports:
-    - '7860:7860'
+      - '${UI_PORT}:${UI_PORT}'
     depends_on:
-    - api
+      - api
+
+volumes:
+  node-modules:

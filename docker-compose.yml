@@ -32,6 +32,7 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
+      - GRANT_CORS_ACCESS=http://localhost:${UI_PORT}
     env_file:
       - .env
     ports:
