@@ -3,6 +3,7 @@ version: '3.7'
 services:
   models:
     build: models
+    image: ml-boilerplate/models
     env_file:
       - .env
     ports:
@@ -10,7 +11,7 @@ services:
 
   postgres:
     restart: always
-    image: postgres
+    image: ml-boilerplate/postgres
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_USER=postgres
@@ -24,6 +25,7 @@ services:
 
   api:
     build: api
+    image: ml-boilerplate/api
     command: ["flask", "run", "--host=0.0.0.0", "--port=${API_PORT}"]
     volumes:
       - ./api:/backend
@@ -37,6 +39,7 @@ services:
 
   client:
     build: client
+    image: ml-boilerplate/client
     command: ["npm", "start", "--port ${UI_PORT}"]
     volumes:
       - ./client:/frontend
