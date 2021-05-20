@@ -11,4 +11,6 @@ roadmap.txt
 
 # Ignore downloaded models
 models/model/
-models/test*
+
+#Ignore test scripts
+tests/
