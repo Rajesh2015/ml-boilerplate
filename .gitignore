@@ -10,7 +10,7 @@ api/__pycache__
 roadmap.txt
 
 # Ignore downloaded models
-models/model/
+# models/model/
 
-#Ignore test scripts
+# Ignore test scripts
 tests/

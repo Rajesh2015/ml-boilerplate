@@ -11,7 +11,7 @@ services:
 
   postgres:
     restart: always
-    image: ml-boilerplate/postgres
+    image: postgres
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_USER=postgres
@@ -33,10 +33,13 @@ services:
       - FLASK_ENV=development
       - FLASK_APP=app.py
       - GRANT_CORS_ACCESS=http://localhost:${UI_PORT}
+      - MLFLOW_ENDPOINT=http://${HOST_IP}:${MLFLOW_PORT}/invocations
     env_file:
       - .env
     ports:
       - "${API_PORT}:${API_PORT}"
+    depends_on:
+      - models
 
   client:
     build: client
@@ -47,7 +50,7 @@ services:
       - node-modules:/frontend/node_modules
     environment:
       - NODE_ENV=development
-      - REACT_APP_API_URL=http://localhost:${API_PORT}/api/v1.0/test
+      - REACT_APP_API_URL=http://localhost:${API_PORT}/api/v1.0
     env_file:
       - .env
     ports:

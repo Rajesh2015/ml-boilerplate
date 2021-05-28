@@ -50,7 +50,9 @@ To downlaod a model in Databricks:
     return l
 
 ## How to Use
-Firstly, download [Docker desktop](https://www.docker.com/products/docker-desktop) and follow its
+Set HOST_IP=your host IP address in \.env file. (annoying, I know, will fix).
+
+Download [Docker desktop](https://www.docker.com/products/docker-desktop) and follow its
  instructions to install it. This allows us to start using Docker containers.
  
 Create a local copy of this repository and run
@@ -91,8 +93,13 @@ in a separate terminal window or press __control + C__.
 
 
 ## Future plans
+* Find a way to deal with HOST_IP in .env file
 * Add boilerplate for running tests locally and through continuous integration.
 * Add boilerplate for configuring production-ready settings and deployment.
+* Add boilerplate for database migrations and get API data from PostgreSQL
+* Add a predict endpoint to th API and send input data to the model
+* Add a beautiful frontend template
+* Find a simple sample model
 
 
 ## License

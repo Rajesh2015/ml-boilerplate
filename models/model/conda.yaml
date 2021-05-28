@@ -1,0 +1,10 @@
+channels:
+- defaults
+dependencies:
+- python=3.7.6
+- pip
+- pip:
+  - mlflow
+  - dill
+  - cloudpickle==1.4.1
+name: mlflow-env
