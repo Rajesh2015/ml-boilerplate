@@ -9,8 +9,8 @@ services:
     ports:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
 
-  postgres:
-    restart: always
+  db:
+    # restart: always
     image: postgres
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -27,19 +27,24 @@ services:
     build: api
     image: ml-boilerplate/api
     command: ["flask", "run", "--host=0.0.0.0", "--port=${API_PORT}"]
+    # command: sh -c "flask db migrate &&
+    #   flask db upgrade &&
+    #   flask run --host=0.0.0.0 --port=${API_PORT}"
     volumes:
       - ./api:/backend
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
       - GRANT_CORS_ACCESS=http://localhost:${UI_PORT}
-      - MLFLOW_ENDPOINT=http://${HOST_IP}:${MLFLOW_PORT}/invocations
+      - MLFLOW_ENDPOINT=http://models:${MLFLOW_PORT}/invocations
+      - DB_ENDPOINT=postgresql://postgres:postgres@db:${POSTGRES_PORT}
     env_file:
       - .env
     ports:
       - "${API_PORT}:${API_PORT}"
     depends_on:
       - models
+      - db
 
   client:
     build: client

@@ -10,7 +10,7 @@ class App extends React.Component {
     this.state = {
       error: null,
       isLoaded: false,
-      test_items: [],
+      fruits: [],
       predict_response: null,
       model_input: `{"data":["Hello model"]}`
     };
@@ -19,13 +19,13 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch(API_URL.concat("/test"))
+    fetch(API_URL.concat("/fruits"))
       .then(async res => await res.json())
       .then(
         (result) => {
           this.setState({
             isLoaded: true,
-            test_items: result.items,
+            fruits: result.items,
           });
         },
         (error) => {
@@ -68,7 +68,7 @@ class App extends React.Component {
   }
 
   render() {
-    const {error, isLoaded, test_items, predict_items} = this.state;
+    const { error, isLoaded, fruits, predict_response} = this.state;
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
@@ -79,12 +79,12 @@ class App extends React.Component {
           <header><b>ML Boilerplate Machine Learning Template</b></header>
           <p>
             <label>
-            Test data:
+            Fruits (Postgres integration):
             </label>
             <ul>
-              {test_items.map(item => (
+              {fruits.map(item => (
                 <li key={item.name}>
-                  {item.name} {item.price}
+                  {item.name}: {item.price}$
                 </li>
               ))}
             </ul>
@@ -104,7 +104,7 @@ class App extends React.Component {
             <label>
               Prediction result:
               <br/>
-              {this.state.predict_response}
+              {predict_response}
             </label>
           </p>
 

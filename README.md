@@ -50,8 +50,6 @@ To downlaod a model in Databricks:
     return l
 
 ## How to Use
-Set HOST_IP=your host IP address in \.env file. (annoying, I know, will fix).
-
 Download [Docker desktop](https://www.docker.com/products/docker-desktop) and follow its
  instructions to install it. This allows us to start using Docker containers.
  
@@ -67,8 +65,17 @@ After the containers have been built (this may take a few minutes), run
 
     docker-compose up
     
-This one command boots up a local server for Flask (on port 5000)
-and React (on port 3000). Head over to
+Initialize the database by running 
+
+    cd api
+    sh init_db.sh
+
+Seed some data by running
+
+    cd api
+    sh seed_db.sh
+
+Head over to
 
     http://localhost:3000/ 
     
@@ -77,9 +84,9 @@ respective prices.
 Though the apparent result is underwhelming, this data was retrieved through an API call
  to our Flask server, which can be accessed at
 
-    http://localhost:4000/api/v1.0/test
+    http://localhost:4000/api/v1.0/fruits
     
-The trailing '*/api/v1.0/test*' is simply for looks, and can be tweaked easily
+The trailing '*/api/v1.0/fruits*' is simply for looks, and can be tweaked easily
 in [api/app.py](api/app.py). The front-end logic for consuming our API is
 contained in [client/src/index.js](client/src/index.js). The code contained within
 these files simply exists to demonstrate how our front-end might consume our back-end
@@ -91,15 +98,10 @@ Finally, to gracefully stop running our local servers, you can run
 
 in a separate terminal window or press __control + C__.
 
-
 ## Future plans
-* Find a way to deal with HOST_IP in .env file
+* Upgrade to latest version of react
 * Add boilerplate for running tests locally and through continuous integration.
 * Add boilerplate for configuring production-ready settings and deployment.
-* Add boilerplate for database migrations and get API data from PostgreSQL
-* Add a predict endpoint to th API and send input data to the model
-* Add a beautiful frontend template
-* Find a simple sample model
 
 
 ## License
