@@ -20,19 +20,6 @@ def root_response():
     response = make_response("ML-Boilerplate API. Endpoints: /api/v1.0/test, /api/v1.0/predict")
     return response
 
-
-@app.route('/api/v1.0/test', methods=['GET'])
-def test_response():
-    """Return a sample JSON response."""
-    sample_response = {
-        "items": [
-            { "id": 1, "name": "Apples",  "price": "$2" },
-            { "id": 2, "name": "Peaches", "price": "$5" }
-        ]
-    }
-    response = make_response(jsonify(sample_response))
-    return response
-
 @app.route('/api/v1.0/fruits', methods=['GET', 'POST'])
 def fruits():
     """Handle fruits (Postgres integration)"""

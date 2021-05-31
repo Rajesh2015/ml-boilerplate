@@ -65,8 +65,13 @@ After the containers have been built (this may take a few minutes), run
 
     docker-compose up
     
-Initialize the database by running ```sh /api/init_db.sh```
-Seed some data by running ```sh /api/seed_db.sh```
+Initialize the database by running 
+
+    sh /api/init_db.sh
+
+Seed some data by running
+
+    sh /api/seed_db.sh
 
 Head over to
 
