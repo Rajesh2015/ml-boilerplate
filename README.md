@@ -67,11 +67,13 @@ After the containers have been built (this may take a few minutes), run
     
 Initialize the database by running 
 
-    sh /api/init_db.sh
+    cd api
+    sh init_db.sh
 
 Seed some data by running
 
-    sh /api/seed_db.sh
+    cd api
+    sh seed_db.sh
 
 Head over to
 
