@@ -4,13 +4,13 @@ client/build
 # Ignore pycache
 api/__pycache__
 
+# Ignore database migrations
+api/migrations/
+
 # Ignore auxillary files
 .idea
 .DS_Store
 roadmap.txt
-
-# Ignore downloaded models
-# models/model/
 
 # Ignore test scripts
 tests/
