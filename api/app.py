@@ -33,6 +33,7 @@ def fruits():
         else:
             return make_response({"error": "The request payload is not in JSON format"}, 400)
     elif request.method == 'GET':
+        seed()
         fruits = FruitsModel.query.all()
         results = [
             {
@@ -53,6 +54,13 @@ def predict_response():
     except Exception as exc:
         app.logger.error(exc)
         return make_response({'error': 'Error calling model engine: ' + str(exc)}, 500)
+
+def seed():
+    fruits = FruitsModel.query.all()
+    if len(fruits) == 0:
+        db.session.add(FruitsModel(name='Apples', price=1.2))
+        db.session.add(FruitsModel(name='Oranges', price=3.4))
+        db.session.commit()    
 
 class FruitsModel(db.Model):
     __tablename__ = 'fruits'

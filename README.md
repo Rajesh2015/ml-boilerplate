@@ -65,16 +65,6 @@ After the containers have been built (this may take a few minutes), run
 
     docker-compose up
     
-Initialize the database by running 
-
-    cd api
-    sh init_db.sh
-
-Seed some data by running
-
-    cd api
-    sh seed_db.sh
-
 Head over to
 
     http://localhost:3000/ 
