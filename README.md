@@ -100,9 +100,16 @@ in a separate terminal window or press __control + C__.
 
 ## Future plans
 * Upgrade to latest version of react
+* Avoid manual steps to initialze database
+    * See if it possible to initialize database in docker-compose file
 * Add boilerplate for running tests locally and through continuous integration.
 * Add boilerplate for configuring production-ready settings and deployment.
-
+    * Add AWS RDS for Postgres to terraform cloudops script
+        * Make sure local Postgres and RDS Postgres is same version
+        * Figure out how to script database initialization
+* Expose client and api through HTTPS, set up routing and SSL certs in terraform
+* Put together docker-compose.production.yml for AWS AKS
+* Create a Jenkins script to build and deploy to AWS AKS
 
 ## License
 Feel free to use the code in this repository however you wish. Details are provided in

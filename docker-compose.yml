@@ -11,7 +11,7 @@ services:
 
   db:
     # restart: always
-    image: postgres
+    image: postgres:12
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_USER=postgres
