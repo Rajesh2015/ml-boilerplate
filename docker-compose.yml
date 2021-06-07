@@ -29,8 +29,8 @@ services:
       flask db migrate &&
       flask db upgrade &&
       flask run --host=0.0.0.0 --port=${API_PORT}"
-    volumes:
-      - ./api:/backend
+#   volumes:
+#      - ./api:/backend
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
@@ -49,9 +49,9 @@ services:
     build: client
     image: ml-boilerplate/client
     command: ["npm", "start", "--port ${UI_PORT}"]
-    volumes:
-      - ./client:/frontend
-      - node-modules:/frontend/node_modules
+#   volumes:
+#      - ./client:/frontend
+#      - node-modules:/frontend/node_modules
     environment:
       - NODE_ENV=development
       - REACT_APP_API_URL=http://localhost:${API_PORT}/api/v1.0
@@ -62,5 +62,5 @@ services:
     depends_on:
       - api
 
-volumes:
-  node-modules:
+#volumes:
+#  node-modules:
