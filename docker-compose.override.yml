@@ -1,0 +1,24 @@
+# THIS DOCKER-COMPOSE FILE SPECIFIES DEVELOPMENT MODIFICATIONS
+# TO THE BASE DOCKER-COMPOSE FILE. IT IS USED AUTOMATICALLY
+# WHEN CALLING `docker-compose up`. FOR MORE INFORMATION SEE:
+# https://docs.docker.com/compose/extends/
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    command: -p ${POSTGRES_PORT}
+
+  api:
+    depends_on:
+      - models
+      - db

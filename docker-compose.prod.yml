@@ -1,24 +1,27 @@
+# THIS DOCKER-COMPOSE FILE EXTENDS THE BASE `docker-compose.yml`
+# WITH SETTINGS RELEVANT FOR PRODUCTION DEPLOYMENT ON A SINGLE
+# SERVER. FOR MORE INFORMATION SEE:
+# https://docs.docker.com/compose/extends/
 version: '3.7'
 
 services:
   models:
     env_file:
       - prod.env
-    ports:
-      - "80:${MLFLOW_PORT}"
 
   api:
     env_file:
       - prod.env
-    ports:
-      - "80:${API_PORT}"
-    depends_on:
-      - models
+    volumes:
+      - api-backend:/backend
 
   client:
     env_file:
       - prod.env
-    ports:
-      - '80:${UI_PORT}'
-    depends_on:
-      - api
+    volumes:
+      - client-frontend:/frontend/build
+
+volumes:
+  client-node-modules:
+  client-frontend:
+  api-backend:
