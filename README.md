@@ -95,16 +95,53 @@ models/model folder should contain files like these (depending on the model):
 
 Once you have replaced the model files, you may have to change the format of the input data.
 
+## Kubernetes
+We use AWS EKS (Kubernetes) to host the application in production.
+
+Kubernetes deployment scripts for AWS EKS can be found in folder kubernetes.
+
+In the following sections you can see how to set yourself up for managing the Kuberbetes cluster using kubectl.
+
+### Install aws cli
+See: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html
+
+### Configure aws cli
+Open ~/.aws/credentials (Linux & Mac) or %USERPROFILE%\.aws\credentials (Windows)
+
+Set the default section:
+
+    [default]
+    aws_access_key_id=AKIAIOSFODNN7EXAMPLE
+    aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    aws_session_token=<token>
+
+List EKS clusters:
+
+    aws eks list-clusters
+
+### Install kubectl
+See: https://kubernetes.io/docs/tasks/tools/#kubectl
+
+### Configure kubectl for AWS EKS
+Run aws command to update eks configuration:
+
+    aws eks --region <region> update-kubeconfig --name <name of EKS cluster>
+
+Set default namespace:
+
+    kubectl config set-context --current --namespace=ml-boilerplate
+
+List pods:
+
+    kubectl get pods
+
+See pod log:
+
+    kubectl logs -p <pod>
+
 ## Future plans
-* Upgrade to latest version of react
-* Add boilerplate for running tests locally and through continuous integration.
-* Add boilerplate for configuring production-ready settings and deployment.
-    * Add AWS RDS for Postgres to terraform cloudops script
-        * Make sure local Postgres and RDS Postgres is same version
-        * Figure out how to script database initialization
+* Create a Kubernetes deployment scripts to build and deploy to AWS AKS
 * Expose client and api through HTTPS, set up routing and SSL certs in terraform
-* Put together docker-compose.production.yml for AWS AKS
-* Create a Jenkins script to build and deploy to AWS AKS
 
 ## License
 Feel free to use the code in this repository however you wish. Details are provided in
