@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: client-ingress
+  labels:
+    name: client-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/subnets: subnet-0c7272f084be1505b, subnet-09a42be06b70f88f3
+spec:
+  rules:
+    - http:
+        paths:
+          - path: "/*"
+            backend:
+              serviceName: client
+              servicePort: 3000
