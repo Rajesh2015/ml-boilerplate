@@ -81,14 +81,7 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-       #   volumeMounts:
-       #     - mountPath: /backend
-       #       name: api-claim0
       restartPolicy: Always
-      #volumes:
-      #  - name: api-claim0
-      #    persistentVolumeClaim:
-      #      claimName: api-claim0
 status: {}
 
 --- 
@@ -154,7 +147,6 @@ spec:
                   key: POSTGRES_PORT
                   name: env
             - name: REACT_APP_API_URL
-              #value: http://api:4000/api/v1.0
               valueFrom:
                 configMapKeyRef:
                   key: REACT_APP_API_URL
@@ -169,32 +161,7 @@ spec:
           ports:
             - containerPort: 3000
           resources: {}
-            # requests:
-            #   memory: "64Mi"
-            #   cpu: "250m"
-            # limits:
-            #   memory: "128Mi"
-            #   cpu: "500m"
-          #volumeMounts:
-          #  - mountPath: /frontend
-          #    name: frontend
-          #  - mountPath: /frontend/node_modules
-          #    name: node-modules
       restartPolicy: Always
-      #volumes:
-      #  - name: frontend
-      #    hostPath: 
-      #      path: /Users/vishalfaldu/ml-boilerplate/client
-      #  - name: node-modules
-      #    hostPath:
-      #      path: /Users/vishalfaldu/ml-boilerplate/client/node_modules
-      # volumes:
-      #   - name: client-claim0
-      #     persistentVolumeClaim:
-      #       claimName: client-claim0
-      #   - name: node-modules
-     #     persistentVolumeClaim:
-      #       claimName: node-modules
 status: {}
 
 ---

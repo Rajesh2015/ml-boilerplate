@@ -1,23 +1,15 @@
-# THIS DOCKER-COMPOSE FILE EXTENDS THE BASE `docker-compose.yml`
-# WITH SETTINGS RELEVANT FOR PRODUCTION DEPLOYMENT ON A SINGLE
-# SERVER. FOR MORE INFORMATION SEE:
-# https://docs.docker.com/compose/extends/
+# This docker-compose file extends the basic `docker-compose.yml`
+# with settings relevant for production deployment on a single server.
+# For more information see: https://docs.docker.com/compose/extends/
+# To test production setup: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 version: '3.7'
 
 services:
-  models:
-    env_file:
-      - prod.env
-
   api:
-    env_file:
-      - prod.env
     volumes:
       - api-backend:/backend
 
   client:
-    env_file:
-      - prod.env
     volumes:
       - client-frontend:/frontend/build
 

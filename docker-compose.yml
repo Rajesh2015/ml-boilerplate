@@ -1,6 +1,19 @@
 version: '3.7'
 
 services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    command: -p ${POSTGRES_PORT}
+
   models:
     build: models
     image: ml-boilerplate/models
@@ -13,8 +26,8 @@ services:
     build: api
     image: ml-boilerplate/api
     command: sh -c "flask db init || true &&
-      flask db migrate &&
-      flask db upgrade &&
+      flask db migrate || true &&
+      flask db upgrade || true &&
       flask run --host=0.0.0.0 --port=${API_PORT}"
     volumes:
       - ./api:/backend
@@ -30,6 +43,7 @@ services:
       - "${API_PORT}:${API_PORT}"
     depends_on:
       - models
+      - db
 
   client:
     build: client
