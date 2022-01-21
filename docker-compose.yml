@@ -25,12 +25,10 @@ services:
   api:
     build: api
     image: ml-boilerplate/api
-    command: sh -c "flask db init || true &&
-      flask db migrate || true &&
-      flask db upgrade || true &&
-      flask run --host=0.0.0.0 --port=${API_PORT}"
+    command:
+      uvicorn api.main:application  --workers 1 --host 0.0.0.0 --port ${API_PORT}
     volumes:
-      - ./api:/backend
+      - ./api:/ml-boilerplate/api
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
@@ -55,7 +53,7 @@ services:
       - node-modules:/frontend/node_modules
     environment:
       - NODE_ENV=development
-      - REACT_APP_API_URL=http://localhost:${API_PORT}/api/v1.0
+      - REACT_APP_API_URL=http://localhost:${API_PORT}/v1_0
     env_file:
       - .env
     ports:

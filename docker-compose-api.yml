@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    env_file:
+      - api/.env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    command: -p ${POSTGRES_PORT}
+  api:
+    build: api
+    image: ml-boilerplate/api
+    command:
+      uvicorn api.main:application  --workers 1 --host 0.0.0.0 --port ${API_PORT}
+    volumes:
+      - ./api:/ml-boilerplate/api
+    environment:
+      - DB_ENDPOINT=postgresql://postgres:postgres@db:${POSTGRES_PORT}
+    env_file:
+      - api/.env
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    depends_on:
+#      - models
+      - db
+
+#  client:
+#    build: client
+#    image: ml-boilerplate/client
+#    command: ["npm", "start", "--port ${UI_PORT}"]
+#    volumes:
+#      - ./client:/frontend
+#      # One-way volume to use node_modules from inside image
+#      - node-modules:/frontend/node_modules
+#    environment:
+#      - NODE_ENV=development
+#      - REACT_APP_API_URL=http://localhost:${API_PORT}/api/v1.0
+#    env_file:
+#      - .env
+#    ports:
+#      - '${UI_PORT}:${UI_PORT}'
+#    depends_on:
+#      - api
+
+volumes:
+  node-modules:
