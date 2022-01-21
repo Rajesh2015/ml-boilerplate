@@ -41,10 +41,12 @@ def get_settings():
 settings: Config = get_settings()
 application = FastAPI(title=settings.NAME)
 LATEST_API_VERSION = APIVersion(major_version=settings.major_version, minor_version=settings.minor_version)
-
+origins = [
+    "http://0.0.0.0:4000",
+]
 application.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True,
@@ -75,7 +77,7 @@ def get_fruits(db: Session = Depends(get_db)):
             "name": fruit.name,
             "price": fruit.price
         } for fruit in fruits]
-    return JSONResponse(results)
+    return JSONResponse({"items": results})
 
 
 @prefix_router.post('/fruits')
