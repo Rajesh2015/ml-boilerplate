@@ -26,13 +26,11 @@ services:
     build: api
     image: ml-boilerplate/api
     command:
-      uvicorn api.main:application  --workers 1 --host 0.0.0.0 --port ${API_PORT}
+      uvicorn api.main:application  --host 0.0.0.0 --port ${API_PORT}
     volumes:
       - ./api:/ml-boilerplate/api
     environment:
-      - FLASK_ENV=development
-      - FLASK_APP=app.py
-      - GRANT_CORS_ACCESS=http://localhost:${UI_PORT}
+      - WEB_CONCURRENCY=2
       - MLFLOW_ENDPOINT=http://models:${MLFLOW_PORT}/invocations
       - DB_ENDPOINT=postgresql://postgres:postgres@db:${POSTGRES_PORT}
     env_file:
@@ -53,7 +51,7 @@ services:
       - node-modules:/frontend/node_modules
     environment:
       - NODE_ENV=development
-      - REACT_APP_API_URL=http://localhost:${API_PORT}/v1_0
+      - REACT_APP_API_URL=http://localhost:${API_PORT}/api/v1.0
     env_file:
       - .env
     ports:

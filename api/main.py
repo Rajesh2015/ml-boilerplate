@@ -44,10 +44,7 @@ settings: Config = get_settings()
 application = FastAPI(title=settings.NAME)
 dictConfig(LogConfig().dict())
 logger = logging.getLogger(settings.NAME)
-origins = [
-    "http://localhost:3000",
-    "localhost:3000"
-]
+origins = ["*"]
 
 application.add_middleware(
     CORSMiddleware,
@@ -99,12 +96,12 @@ def post_fruits(fruit: Fruits, db: Session = Depends(get_db)):
 def post_predict_response(request: Dict):
     """Execute a prediction."""
     logger.info(request)
-    predict_response(request)
+    return predict_response(request)
 
 
 @prefix_router.options('/api/v1.0/predict')
 def option_predict_response(request: Dict):
-    predict_response(request)
+    return predict_response(request)
 
 
 def predict_response(request: Dict):
@@ -117,7 +114,7 @@ def predict_response(request: Dict):
         logger.info(post_response.json())
         return post_response.json()
     except Exception as exc:
-        application.logger.error(exc)
+        logger.error(exc)
         return JSONResponse(status_code=500, content={'error': 'Error calling model engine: ' + str(exc)})
 
 
