@@ -14,11 +14,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
 @app.route('/', methods=['GET'])
 def root_response():
     """Info."""
     response = make_response("ML-Boilerplate API. Endpoints: /api/v1.0/test, /api/v1.0/predict")
     return response
+
 
 @app.route('/api/v1.0/fruits', methods=['GET', 'POST'])
 def fruits():
@@ -42,6 +44,7 @@ def fruits():
             } for fruit in fruits]
         return make_response({"items": results})
 
+
 @app.route('/api/v1.0/predict', methods=['POST', 'OPTIONS'])
 def predict_response():
     """Execute a prediction."""
@@ -55,12 +58,14 @@ def predict_response():
         app.logger.error(exc)
         return make_response({'error': 'Error calling model engine: ' + str(exc)}, 500)
 
+
 def seed():
     fruits = FruitsModel.query.all()
     if len(fruits) == 0:
         db.session.add(FruitsModel(name='Apples', price=1.2))
         db.session.add(FruitsModel(name='Oranges', price=3.4))
-        db.session.commit()    
+        db.session.commit()
+
 
 class FruitsModel(db.Model):
     __tablename__ = 'fruits'
@@ -74,4 +79,4 @@ class FruitsModel(db.Model):
         self.price = price
 
     def __repr__(self):
-        return f"<Fruit {self.name}>"    
+        return f"<Fruit {self.name}>"

@@ -1,7 +1,7 @@
-# This docker-compose file extends the basic `docker-compose.yml`
+# This docker-compose file extends the basic `docker-compose-api.yml`
 # with settings relevant for production deployment on a single server.
 # For more information see: https://docs.docker.com/compose/extends/
-# To test production setup: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+# To test production setup: docker-compose -f docker-compose-api.yml -f docker-compose.prod.yml up
 version: '3.7'
 
 services:

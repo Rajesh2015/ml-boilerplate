@@ -25,16 +25,12 @@ services:
   api:
     build: api
     image: ml-boilerplate/api
-    command: sh -c "flask db init || true &&
-      flask db migrate || true &&
-      flask db upgrade || true &&
-      flask run --host=0.0.0.0 --port=${API_PORT}"
+    command:
+      uvicorn api.main:application  --host 0.0.0.0 --port ${API_PORT}
     volumes:
-      - ./api:/backend
+      - ./api:/ml-boilerplate/api
     environment:
-      - FLASK_ENV=development
-      - FLASK_APP=app.py
-      - GRANT_CORS_ACCESS=http://localhost:${UI_PORT}
+      - WEB_CONCURRENCY=2
       - MLFLOW_ENDPOINT=http://models:${MLFLOW_PORT}/invocations
       - DB_ENDPOINT=postgresql://postgres:postgres@db:${POSTGRES_PORT}
     env_file:
