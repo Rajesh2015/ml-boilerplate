@@ -1,6 +1,8 @@
 import json
+import logging
 import os
-
+from logging.config import dictConfig
+from .helper.logconfig import LogConfig
 from fastapi import APIRouter, Depends, Request
 import uvicorn
 import requests
@@ -10,7 +12,7 @@ from .model.Schemas import Fruits
 from .helper.APIVersion import *
 from .helper.db import get_db, engine
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 from functools import lru_cache
 from os import environ, path
 from dotenv import load_dotenv
@@ -40,16 +42,19 @@ def get_settings():
 
 settings: Config = get_settings()
 application = FastAPI(title=settings.NAME)
-LATEST_API_VERSION = APIVersion(major_version=settings.major_version, minor_version=settings.minor_version)
+dictConfig(LogConfig().dict())
+logger = logging.getLogger(settings.NAME)
 origins = [
-    "http://0.0.0.0:4000",
+    "http://localhost:3000",
+    "localhost:3000"
 ]
+
 application.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    allow_credentials=True,
 )
 
 
@@ -67,7 +72,7 @@ async def info():
            f'/api/v1.0/predict" '
 
 
-@prefix_router.get('/fruits')
+@prefix_router.get('/api/v1.0/fruits')
 def get_fruits(db: Session = Depends(get_db)):
     """Handle fruits (Postgres integration)"""
     seed(db)
@@ -80,34 +85,37 @@ def get_fruits(db: Session = Depends(get_db)):
     return JSONResponse({"items": results})
 
 
-@prefix_router.post('/fruits')
+@prefix_router.post('/api/v1.0/fruits')
 def post_fruits(fruit: Fruits, db: Session = Depends(get_db)):
-    print(fruit)
+    # print(fruit)
+    logger.info(fruit)
     new_fruit = FruitsModel(name=fruit.name, price=fruit.price)
     db.add(new_fruit)
     db.commit()
     return {"message": f"fruit {new_fruit.name} has been created successfully."}
 
 
-@prefix_router.post('/predict')
-def post_predict_response(request: Request):
+@prefix_router.post('/api/v1.0/predict')
+def post_predict_response(request: Dict):
     """Execute a prediction."""
+    logger.info(request)
     predict_response(request)
 
 
-@prefix_router.options('/predict')
-def option_predict_response(request: Request):
+@prefix_router.options('/api/v1.0/predict')
+def option_predict_response(request: Dict):
     predict_response(request)
 
 
-def predict_response(request:Request):
+def predict_response(request: Dict):
     """Execute a prediction."""
     try:
-        data = json.dumps(request.json())
+        data = json.dumps(request)
         headers = {'Content-type': 'application/json'}
         url = os.environ.get('MLFLOW_ENDPOINT')
         post_response = requests.post(url, data=data, headers=headers)
-        return JSONResponse(post_response.json())
+        logger.info(post_response.json())
+        return post_response.json()
     except Exception as exc:
         application.logger.error(exc)
         return JSONResponse(status_code=500, content={'error': 'Error calling model engine: ' + str(exc)})
@@ -122,9 +130,6 @@ def seed(db: Session = Depends(get_db)):
 
 
 application.include_router(prefix_router)
-
-application = VersionedFastAPI(application, default_api_version=LATEST_API_VERSION.to_tuple(),
-                               description='Ml Boiler Plate')
 
 if __name__ == "__main__":
     application.logger.info('Starting the app')

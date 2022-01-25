@@ -1,12 +1,17 @@
 from pydantic import BaseModel
+from os import environ, path
+from dotenv import load_dotenv
+from pathlib import Path
 
-from api.main import settings
+basedir = path.abspath(path.dirname(__file__))
+base_path = Path(__file__).parent
+load_dotenv(path.join(basedir, '.env'))
 
 
 class LogConfig(BaseModel):
     """Logging configuration to be set for the server"""
 
-    LOGGER_NAME: str = settings.NAME
+    LOGGER_NAME: str = environ.get('NAME')
     LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(message)s"
     LOG_LEVEL: str = "DEBUG"
 
@@ -28,5 +33,5 @@ class LogConfig(BaseModel):
         },
     }
     loggers = {
-        settings.NAME: {"handlers": ["default"], "level": LOG_LEVEL},
+        environ.get('NAME'): {"handlers": ["default"], "level": LOG_LEVEL},
     }

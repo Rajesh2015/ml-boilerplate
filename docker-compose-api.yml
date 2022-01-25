@@ -22,6 +22,7 @@ services:
       - ./api:/ml-boilerplate/api
     environment:
       - DB_ENDPOINT=postgresql://postgres:postgres@db:${POSTGRES_PORT}
+      - MLFLOW_ENDPOINT=http://models:${MLFLOW_PORT}/invocations
     env_file:
       - api/.env
     ports:
