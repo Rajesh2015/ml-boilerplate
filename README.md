@@ -1,4 +1,4 @@
-# React + Flask + PostgreSQL + MLFlow Development Boilerplate
+# React + Fast API + PostgreSQL + MLFlow Development Boilerplate
 
 ## Overview
 Extremely lightweight development environment for a machine-learning prototype application. 
@@ -6,10 +6,10 @@ Extremely lightweight development environment for a machine-learning prototype a
 *The intend is to boost your data science dept. so that they can deliver an AI prototype in 3 weeks.*
 
 The app is organized into 4 micro-services:
-- [React](https://reactjs.org/) front-end 
-- [Flask](http://flask.pocoo.org/) API back-end
+- [React](https://reactjs.org) Front-end 
+- [Fast API](https://fastapi.tiangolo.com) Python / Fast API back-end
 - [PostgreSQL](http://postgres.org) SQL database 
-- [MLFLow](http://mlflow.org) model engine
+- [MLFLow](http://mlflow.org) Model engine
 
 The front-end connects to the API by making HTTP requests for desired data.
 The API connects to the SQL database and the model engine.
@@ -37,7 +37,11 @@ Test the app by opening this from a browser:
     
 The fruits listed are provided by the API at this endpoint:
 
-    http://localhost:4000/api/v1.0/fruits
+    http://localhost:4000/latest/fruits
+
+See Open API documentation of the API here:
+
+    http://localhost:4000/latest/docs
 
 In turn, the API issues SQL requests to PostgreSQL at:
 
@@ -45,7 +49,7 @@ In turn, the API issues SQL requests to PostgreSQL at:
 
 The "Predict" button will request a prediction from the API at this endpoint:
 
-    http://localhost:4000/api/v1.0/predict
+    http://localhost:4000/latest/predict
 
 In turn, the API will forward the request to the model engine at:
 
