@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
-from api.helper.db import Base
+from .database import Base
 
+"""Create models, see https://fastapi.tiangolo.com/tutorial/sql-databases/"""
 
 class FruitsModel(Base):
     __tablename__ = 'fruits'
