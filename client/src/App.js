@@ -4,7 +4,7 @@ import './index.css'
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Error = (props) => {
-  return <div>Error: {props.message}</div>;
+  return <div style={{ color: 'red' }}>Error: {props.message}</div>;
 }
 const Loading = () => {
   return <div>Loading...</div>;
@@ -49,16 +49,16 @@ const AddItem = (props) => {
         if (!response.ok) {
           // get error message from body or default to response status
           const error = (data && data.message) || response.status;
-          setError(`${error}`);
-          console.log('response error', error);
+          setError(`Error when calling ${API_URL}/fruits`);
+          console.error(`Error when calling ${API_URL}/fruits`, error);
         } else {
           console.log(data);
           setFetchNewItems(data);
         }
       })
       .catch(error => {
-        setError(error);
-        console.error('There was an error!', error);
+        setError(`Error when calling ${API_URL}/fruits`);
+        console.error(`Error when calling ${API_URL}/fruits`, error);
       });
   }
 
@@ -103,16 +103,16 @@ const SubmitForm = (props) => {
         if (!response.ok) {
           // get error message from body or default to response status
           const error = (data && data.message) || response.status;
-          setError(`${error}`);
-          console.log('response error', error);
+          setError(`Error when calling ${API_URL}/predict`);
+          console.log(`Error when calling ${API_URL}/predict`, error);
         } else {
           console.log(data);
           setPredict(data);
         }
       })
       .catch(error => {
-        setError(error);
-        console.error('There was an error!', error);
+        setError(`Error when calling ${API_URL}/predict`);
+        console.log(`Error when calling ${API_URL}/predict`, error);
       });
   }
 
@@ -151,10 +151,15 @@ const App = () => {
           setIsLoaded(true);
         },
         (error) => {
-          setError(error);
+          setError(`Error when calling ${API_URL}/fruits`);
+          console.error(`Error when calling ${API_URL}/fruits`, error);
           setIsLoaded(true);
         }
-      );
+      )
+      .catch(error => {
+        setError(`Error when calling ${API_URL}/fruits`);
+        console.error(`Error when calling ${API_URL}/fruits`, error);
+      });
   }, [fetchNewItems]);
 
   return (
