@@ -1,19 +1,33 @@
 import os
 import json
 import requests
-from typing import Optional, Dict
-from pydantic import BaseModel
+from typing import Dict
 from fastapi import FastAPI, Depends, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_versioning import VersionedFastAPI, version
-from sqlalchemy.orm import Session
-from .helper.db import get_db, engine
-from .model import fruitmodel
-from .model.fruitmodel import FruitsModel
-from .model.Schemas import Fruits
 
+from sqlalchemy.orm import Session
+from .database import SessionLocal, engine
+
+from . import models
+from .models import FruitsModel
+from .schemas import Fruits
+
+# Database migration, see https://fastapi.tiangolo.com/tutorial/sql-databases/
+models.Base.metadata.create_all(bind=engine)
+
+# Dependency for database session, see https://fastapi.tiangolo.com/tutorial/sql-databases/
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Fast API app, see https://fastapi.tiangolo.com/
 app = FastAPI()
+
 @app.get("/")
 def read_root(request: Request):
     url_list = [
@@ -22,12 +36,22 @@ def read_root(request: Request):
     ]
     return { "endpoints": set(url_list) }
 
+@app.get('/foo')
+@version(1)
+def foo():
+    return "foo V1"
+
+@app.get('/foo')
+@version(2)
+def foo():
+    return "foo V2"
+
 @app.get('/fruits')
 @version(1)
 def get_fruits(db: Session = Depends(get_db)):
     """Handle fruits (Postgres integration)"""
     seed(db)
-    fruits = db.query(fruitmodel.FruitsModel).all()
+    fruits = db.query(models.FruitsModel).all()
     results = [
         {
             "name": fruit.name,
@@ -56,6 +80,7 @@ def predict_response(request: Dict):
     except Exception as exc:
         return JSONResponse(status_code=500, content={'error': 'Error calling model engine: ' + str(exc)})
 
+# Versioned Fast API app, see https://github.com/DeanWay/fastapi-versioning
 app = VersionedFastAPI(app, enable_latest=True, version_format='{major}', prefix_format='/v{major}')
 app.add_middleware(
     CORSMiddleware,
@@ -66,7 +91,7 @@ app.add_middleware(
 )
 
 def seed(db: Session = Depends(get_db)):
-    fruits = db.query(fruitmodel.FruitsModel).all()
+    fruits = db.query(models.FruitsModel).all()
     if len(fruits) == 0:
         db.add(FruitsModel(name='Apples', price=1.2))
         db.add(FruitsModel(name='Oranges', price=3.4))
