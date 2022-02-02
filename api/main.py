@@ -2,7 +2,7 @@ import os
 import json
 import requests
 from typing import Dict
-from fastapi import FastAPI, Depends, Request
+from fastapi import FastAPI, Depends, Request, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_versioning import VersionedFastAPI, version
@@ -17,6 +17,7 @@ from .schemas import Fruits
 # Database migration, see https://fastapi.tiangolo.com/tutorial/sql-databases/
 models.Base.metadata.create_all(bind=engine)
 
+
 # Dependency for database session, see https://fastapi.tiangolo.com/tutorial/sql-databases/
 def get_db():
     db = SessionLocal()
@@ -25,28 +26,39 @@ def get_db():
     finally:
         db.close()
 
+
 # Fast API app, see https://fastapi.tiangolo.com/
 app = FastAPI()
+root = APIRouter(tags=['root'])
+app_route = APIRouter()
 
-@app.get("/")
+
+@root.get("/")
 def read_root(request: Request):
     url_list = [
         route.path
         for route in request.app.routes
     ]
-    return { "endpoints": set(url_list) }
 
-@app.get('/foo')
+    app_router_list = [route.path
+                       for route in app_route.routes]
+
+    return {"endpoints": set(url_list+app_router_list)}
+
+
+@app_route.get('/foo')
 @version(1)
 def foo():
     return "foo V1"
 
-@app.get('/foo')
+
+@app_route.get('/foo')
 @version(2)
 def foo():
     return "foo V2"
 
-@app.get('/fruits')
+
+@app_route.get('/fruits')
 @version(1)
 def get_fruits(db: Session = Depends(get_db)):
     """Handle fruits (Postgres integration)"""
@@ -59,7 +71,8 @@ def get_fruits(db: Session = Depends(get_db)):
         } for fruit in fruits]
     return JSONResponse({"items": results})
 
-@app.post('/fruits')
+
+@app_route.post('/fruits')
 @version(1)
 def post_fruits(fruit: Fruits, db: Session = Depends(get_db)):
     new_fruit = FruitsModel(name=fruit.name, price=fruit.price)
@@ -67,7 +80,8 @@ def post_fruits(fruit: Fruits, db: Session = Depends(get_db)):
     db.commit()
     return {"message": f"fruit {new_fruit.name} has been created successfully."}
 
-@app.post('/predict')
+
+@app_route.post('/predict')
 @version(1)
 def predict_response(request: Dict):
     """Execute a prediction."""
@@ -80,8 +94,12 @@ def predict_response(request: Dict):
     except Exception as exc:
         return JSONResponse(status_code=500, content={'error': 'Error calling model engine: ' + str(exc)})
 
+
 # Versioned Fast API app, see https://github.com/DeanWay/fastapi-versioning
+app.include_router(app_route)
+
 app = VersionedFastAPI(app, enable_latest=True, version_format='{major}', prefix_format='/v{major}')
+app.include_router(root)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -89,6 +107,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
 
 def seed(db: Session = Depends(get_db)):
     fruits = db.query(models.FruitsModel).all()
