@@ -1,5 +1,16 @@
 FROM continuumio/miniconda3
 
+RUN apt-get update && apt-get install
+RUN apt-get install -y \
+  dos2unix \
+  libpq-dev \
+  libmariadb-dev-compat \
+  libmariadb-dev \
+  gcc \
+  && apt-get clean
+
+RUN python -m pip install --upgrade pip
+
 ENV MLFLOW_HOME /opt/mlflow
 ENV MLFLOW_VERSION 1.17.0
 ENV MLFLOW_PORT 5000
