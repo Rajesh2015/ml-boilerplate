@@ -7,16 +7,15 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_versioning import VersionedFastAPI, version
 
-from sqlalchemy.orm import Session
-from .database import SessionLocal, engine
 
-from . import models
+from sqlalchemy.orm import Session
+
+from .database import SessionLocal, engine, Base
 from .models import FruitsModel
 from .schemas import Fruits
 
 # Database migration, see https://fastapi.tiangolo.com/tutorial/sql-databases/
-models.Base.metadata.create_all(bind=engine)
-
+Base.metadata.create_all(bind=engine)
 
 # Dependency for database session, see https://fastapi.tiangolo.com/tutorial/sql-databases/
 def get_db():
@@ -63,7 +62,7 @@ def foo():
 def get_fruits(db: Session = Depends(get_db)):
     """Handle fruits (Postgres integration)"""
     seed(db)
-    fruits = db.query(models.FruitsModel).all()
+    fruits = db.query(FruitsModel).all()
     results = [
         {
             "name": fruit.name,
@@ -110,7 +109,7 @@ app.add_middleware(
 
 
 def seed(db: Session = Depends(get_db)):
-    fruits = db.query(models.FruitsModel).all()
+    fruits = db.query(FruitsModel).all()
     if len(fruits) == 0:
         db.add(FruitsModel(name='Apples', price=1.2))
         db.add(FruitsModel(name='Oranges', price=3.4))
