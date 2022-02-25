@@ -15,3 +15,5 @@ roadmap.txt
 # Ignore test scripts
 tests/
 *.pyc
+
+.vscode/
